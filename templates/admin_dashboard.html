@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">관리자 대시보드</h1>
+    <p class="lead">현재 시스템에 등록된 전체 사용자 목록입니다.</p>
+    
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>사용자 이름</th>
+                    <th>이메일</th>
+                    <th>프리미엄</th>
+                    <th>관리자</th>
+                    <th>프로젝트 수</th>
+                    <th>만료일</th>
+                    <th>구독 상태</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if user.is_premium %}
+                        <span class="badge bg-success text-white">활성</span>
+                        {% else %}
+                        <span class="badge bg-secondary text-white">비활성</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.is_admin %}
+                        <span class="badge bg-danger text-white">ADMIN</span>
+                        {% else %}
+                        <span class="badge bg-info text-white">User</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ user.project_count }}</td>
+                    <td>
+                        {% if user.subscription_expires %}
+                            {{ user.subscription_expires.strftime('%Y-%m-%d %H:%M') }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.subscription_active %}
+                            <span class="badge bg-primary text-white">정기 결제 활성</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">정지/미결제</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
