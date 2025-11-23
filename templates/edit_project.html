@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}프로젝트 수정: {{ project.title }}{% endblock %}
+
+{% block content %}
+    
+    <h2>✏️ 프로젝트 수정: {{ project.title }}</h2>
+    
+    <div class="form-container">
+        <form method="POST" action="{{ url_for('edit_project', project_id=project.id) }}">
+            
+            <div class="form-group">
+                <label for="title">프로젝트 제목:</label>
+                <input type="text" id="title" name="title" value="{{ project.title }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">설명:</label>
+                <textarea id="description" name="description" rows="4">{{ project.description }}</textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">수정 완료</button>
+        </form>
+    </div>
+    
+    <p style="margin-top: 15px;">
+        <a href="{{ url_for('project_detail', project_id=project.id) }}">↩️ 상세 페이지로 돌아가기</a>
+    </p>
+
+{% endblock %}

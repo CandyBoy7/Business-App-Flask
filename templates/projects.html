@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}내 프로젝트{% endblock %}
+
+{% block content %}
+    
+    <h2>📋 내 프로젝트 목록</h2>
+    
+    <p>
+        <a href="{{ url_for('create_project') }}" class="btn btn-primary">➕ 새 프로젝트 생성</a>
+    </p>
+
+    <hr>
+
+    {% if projects %}
+        <ul class="project-list">
+            {% for project in projects %}
+                <li class="project-item">
+                    <span class="project-title">
+                        <a href="{{ url_for('project_detail', project_id=project.id) }}" style="text-decoration: none; color: #007bff; font-weight: bold;">
+                            {{ project.title }}
+                        </a>
+                    </span>
+                    
+                    <span class="project-actions">
+                        <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-primary" style="padding: 5px 10px; font-size: 0.9em;">
+                            상세 보기
+                        </a>
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>아직 생성된 프로젝트가 없습니다. 위의 버튼을 눌러 첫 프로젝트를 만들어 보세요!</p>
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}홈 | 코딩 파트너{% endblock %}
+
+{% block content %}
+    {% if current_user.is_authenticated %}
+        <h2>현재 진행 중인 프로젝트를 확인하세요.</h2>
+        <p>
+            <a href="{{ url_for('list_projects') }}" class="btn btn-primary">내 프로젝트 보기</a>
+        </p>
+    {% else %}
+        <h2>프로젝트 관리를 시작하고 업무 효율을 높이세요!</h2>
+        <p>
+            저비용으로 운영되는 강력한 업무 관리 도구를 지금 바로 이용해 보세요.
+        </p>
+        <p>
+            <a href="{{ url_for('register') }}" class="btn btn-primary">무료 회원가입 및 시작</a>
+        </p>
+    {% endif %}
+
+    <hr>
+    
+    <p style="font-size: 0.9em; color: #777;">
+        무료 계정은 프로젝트 생성 개수가 제한됩니다. 프리미엄으로 업그레이드하여 모든 기능을 무제한으로 사용하세요!
+    </p>
+
+{% endblock %}

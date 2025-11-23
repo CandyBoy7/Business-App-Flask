@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>{% block title %}코딩 파트너{% endblock %}</title>
+</head>
+<body>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if current_user.is_authenticated %}
+            <h1>💡 유료 비즈니스 앱에 오신 것을 환영합니다!</h1>
+            <p>환영합니다, **{{ current_user.username }}**님! (유료: {{ current_user.is_premium }})</p>
+            <div class="nav-links">
+                <a href="{{ url_for('list_projects') }}">내 프로젝트 보기</a> | 
+                <a href="{{ url_for('premium_content') }}">프리미엄 콘텐츠 (테스트)</a> |
+                <a href="{{ url_for('pricing') }}">가격 정책 보기</a> |
+                <a href="{{ url_for('logout') }}">로그아웃</a>
+            </div>
+            <hr>
+        {% else %}
+            <h1>💡 유료 비즈니스 앱에 오신 것을 환영합니다!</h1>
+            <p>이 앱은 **"저렴한 운영비"**를 목표로 개발되었습니다.</p>
+            <div class="nav-links">
+                <a href="{{ url_for('register') }}">회원가입</a> |
+                <a href="{{ url_for('login') }}">로그인</a> |
+                <a href="{{ url_for('pricing') }}">가격 정책 보기</a>
+            </div>
+            <hr>
+        {% endif %}
+
+        <div id="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+        
+    </div>
+</body>
+</html>

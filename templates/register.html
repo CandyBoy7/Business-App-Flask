@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}회원가입{% endblock %}
+
+{% block content %}
+    
+    <h2>회원가입</h2>
+    
+    <div class="form-container">
+        <form method="POST" action="{{ url_for('register') }}">
+            <div class="form-group">
+                <label for="username">사용자 이름:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">이메일 주소:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">비밀번호:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">회원가입</button>
+        </form>
+    </div>
+    
+    <p style="margin-top: 15px;">
+        이미 계정이 있으신가요? <a href="{{ url_for('login') }}">로그인하기</a>
+    </p>
+
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}프로젝트 상세: {{ project.title }}{% endblock %}
+
+{% block content %}
+    
+    <h2>📋 프로젝트: {{ project.title }}</h2>
+    <p>설명: {{ project.description }}</p>
+    
+    <hr>
+    
+    <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+        <a href="{{ url_for('edit_project', project_id=project.id) }}" class="btn" style="background-color: #f39c12; color: white;">
+            📝 프로젝트 수정
+        </a>
+
+        <form method="POST" action="{{ url_for('delete_project', project_id=project.id) }}" 
+              onsubmit="return confirm('경고! 프로젝트와 모든 할 일이 영구적으로 삭제됩니다. 정말 삭제하시겠습니까?');">
+            <button type="submit" class="btn" style="background-color: #e74c3c; color: white;">
+                ❌ 프로젝트 삭제
+            </button>
+        </form>
+    </div>
+
+    <div style="background-color: #e9ecef; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+        <strong>📊 진행률:</strong> <span style="font-weight: bold; color: #007bff;">{{ completion_rate }}</span>
+    </div>
+
+    <h3>✅ 할 일 목록</h3>
+    
+    <form method="POST" action="{{ url_for('add_task', project_id=project.id) }}" style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <input type="text" name="content" placeholder="새 할 일 내용을 입력하세요" required style="flex-grow: 1;">
+        
+        <select name="priority" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; white-space: nowrap;">
+            <option value="1">중요도: 낮음</option>
+            <option value="2">중요도: 보통</option>
+            <option value="3">중요도: 높음</option>
+        </select>
+        
+        <input type="date" name="due_date" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+
+        <button type="submit" class="btn btn-primary" style="padding: 10px 15px; white-space: nowrap;">할 일 추가</button>
+    </form>
+    
+    {% if tasks %}
+        <ul class="task-list">
+            {% for task in tasks %}
+                <li class="task-item">
+                    <span class="content-text" style="text-decoration: {% if task.is_complete %}line-through; color: #777;{% else %}none; color: black;{% endif %};">
+                        
+                        {% if task.priority == 3 %}
+                            <span style="color: white; background-color: #e74c3c; padding: 2px 6px; border-radius: 3px; font-size: 0.75em; margin-right: 5px;">🔥 높음</span>
+                        {% elif task.priority == 2 %}
+                            <span style="color: white; background-color: #f39c12; padding: 2px 6px; border-radius: 3px; font-size: 0.75em; margin-right: 5px;">⚠️ 보통</span>
+                        {% else %}
+                            <span style="color: white; background-color: #3498db; padding: 2px 6px; border-radius: 3px; font-size: 0.75em; margin-right: 5px;">💡 낮음</span>
+                        {% endif %}
+                        
+                        {{ task.content }} 
+                        
+                        <small style="color: #999;">
+                            ({{ task.date_posted.strftime('%Y-%m-%d') }})
+                            {% if task.due_date %}
+                                | 마감일: {{ task.due_date.strftime('%Y-%m-%d') }}
+                            {% endif %}
+                        </small>
+                    </span>
+                    
+                    <div class="actions">
+                        <form method="POST" action="{{ url_for('complete_task', task_id=task.id) }}" style="display: inline;">
+                            <button type="submit" 
+                                    class="btn" 
+                                    style="padding: 5px 10px; font-size: 0.8em; 
+                                           background-color: {% if task.is_complete %}#f39c12{% else %}#2ecc71{% endif %}; 
+                                           color: white;">
+                                {% if task.is_complete %}미완료{% else %}✅ 완료{% endif %}
+                            </button>
+                        </form>
+                        
+                        <button type="button" 
+                                class="btn edit-btn" 
+                                onclick="document.getElementById('edit-form-{{ task.id }}').style.display='block'" 
+                                style="padding: 5px 10px; font-size: 0.8em; background-color: #3498db; color: white;">
+                            ✏️ 수정
+                        </button>
+                        
+                        <form method="POST" action="{{ url_for('delete_task', task_id=task.id) }}" style="display: inline;" onsubmit="return confirm('정말로 이 할 일을 삭제하시겠습니까?');">
+                            <button type="submit" 
+                                    class="btn" 
+                                    style="padding: 5px 10px; font-size: 0.8em; 
+                                           background-color: #e74c3c; 
+                                           color: white;">
+                                ❌ 삭제
+                            </button>
+                        </form>
+                    </div>
+                </li>
+                
+                <div id="edit-form-{{ task.id }}" style="display: none; background: #f0f0f0; padding: 15px; border-radius: 5px; margin-top: 10px; margin-bottom: 20px; border: 1px solid #ccc;">
+                    <form method="POST" action="{{ url_for('edit_task', task_id=task.id) }}" style="display: flex; flex-direction: column; gap: 10px;">
+                        
+                        <input type="text" name="content" value="{{ task.content }}" required style="padding: 8px;">
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <select name="priority" style="padding: 8px; flex-grow: 1;">
+                                <option value="1" {% if task.priority == 1 %}selected{% endif %}>중요도: 낮음</option>
+                                <option value="2" {% if task.priority == 2 %}selected{% endif %}>중요도: 보통</option>
+                                <option value="3" {% if task.priority == 3 %}selected{% endif %}>중요도: 높음</option>
+                            </select>
+                            
+                            <input type="date" name="due_date" 
+                                   value="{{ task.due_date.strftime('%Y-%m-%d') if task.due_date else '' }}" 
+                                   style="padding: 8px; flex-grow: 1;">
+                        </div>
+
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn" style="background-color: #2ecc71; color: white; flex-grow: 1;">수정 완료</button>
+                            <button type="button" class="btn" onclick="document.getElementById('edit-form-{{ task.id }}').style.display='none'" style="background-color: #95a5a6; color: white;">취소</button>
+                        </div>
+                    </form>
+                </div>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>이 프로젝트에는 아직 할 일이 없습니다. 새로운 할 일을 추가해 보세요!</p>
+    {% endif %}
+
+    <hr>
+    <a href="{{ url_for('list_projects') }}">↩️ 프로젝트 목록으로 돌아가기</a>
+{% endblock %}
